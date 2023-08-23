@@ -4,6 +4,7 @@ import com.dataninjas.user_managementservice.Exception.NotFoundException;
 import com.dataninjas.user_managementservice.model.User;
 import com.dataninjas.user_managementservice.repository.UserRepository;
 import com.dataninjas.user_managementservice.service.UserService;
+import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.http.ResponseEntity;
@@ -45,13 +46,13 @@ public class UserController {
 
 
     @PutMapping("/{id}")
-    public ResponseEntity<User> updateUser(@PathVariable("id") String id, @RequestBody User user) {
+    public ResponseEntity<User> updateUser(@PathVariable("id") ObjectId id, @RequestBody User user) {
         User updatedUser = userService.updateUser(id,user);
         return ResponseEntity.ok(updatedUser);
     }
 
     @DeleteMapping("/deleteUser/{id}")
-    public String deleteUser(@PathVariable String id) {
+    public String deleteUser(@PathVariable ObjectId id) {
         if(!userRepository.existsById(id)){
             throw new NotFoundException(("User not found with id " + id));
         }

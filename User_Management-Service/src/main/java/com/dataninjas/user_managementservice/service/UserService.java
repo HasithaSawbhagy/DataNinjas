@@ -27,13 +27,13 @@ public class UserService {
     }
 
 
-    public User updateUser(String id, User user) {
+    public User updateUser(ObjectId id, User user) {
         User existingUser = userRepository.findById(id).orElseThrow(()-> new NotFoundException("User is not found"));
-        existingUser.setId(user.getId());
         existingUser.setEmail(user.getEmail());
         existingUser.setAddress(user.getAddress());
         existingUser.setTelephone(user.getTelephone());
         existingUser.setUsername(user.getUsername());
+        existingUser.setUserID(user.getUserID());
         return userRepository.save(existingUser);
     }
 
