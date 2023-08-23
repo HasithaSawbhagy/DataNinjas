@@ -4,7 +4,6 @@ import com.dataninjas.user_managementservice.Exception.NotFoundException;
 import com.dataninjas.user_managementservice.model.User;
 import com.dataninjas.user_managementservice.repository.UserRepository;
 import com.dataninjas.user_managementservice.service.UserService;
-import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.http.ResponseEntity;
@@ -14,7 +13,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/customer")
-public class CustomerController {
+public class UserController {
     // Implement CRUD operations for customer users
 
     @Autowired
@@ -50,8 +49,6 @@ public class CustomerController {
         User updatedUser = userService.updateUser(id,user);
         return ResponseEntity.ok(updatedUser);
     }
-
-
 
     @DeleteMapping("/deleteUser/{id}")
     public String deleteUser(@PathVariable String id) {
