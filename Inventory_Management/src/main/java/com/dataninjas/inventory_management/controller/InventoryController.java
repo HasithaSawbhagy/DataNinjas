@@ -19,30 +19,30 @@ public class InventoryController {
     private InventoryRepository inventoryRepository;
 
     // create inventory rest api
-    @PostMapping("/inventory")
+    @PostMapping("/post")
     public Inventory createInventory(@RequestBody Inventory inventory) {
         return inventoryRepository.save(inventory);
     }
 
     //get all inventories
-    @GetMapping("/inventory")
+    @GetMapping("/get")
     public List<Inventory> getAllEmployees(){
         return inventoryRepository.findAll();
     }
 
     // get inventory by skuCode rest api
-    @GetMapping("/inventory/{skuCode}")
-    public ResponseEntity<Inventory> getInventoryById(@PathVariable Long skuCode){
-        Inventory inventory = inventoryRepository.findById(skuCode)
-                .orElseThrow(() -> new ResourceNotFoundException("Inventory not exist with skuCode: " + skuCode ));
+    @GetMapping("/getbyid/{id}")
+    public ResponseEntity<Inventory> getInventoryById(@PathVariable Long id){
+        Inventory inventory = inventoryRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Inventory not exist with skuCode: " + id ));
         return ResponseEntity.ok(inventory);
     }
 
     //update inventory rest api
-    @PutMapping("/inventory/{skuCode}")
-    public ResponseEntity<Inventory> updateInventory(@PathVariable Long skuCode, @RequestBody Inventory inventoryDetails){
-        Inventory inventory = inventoryRepository.findById(skuCode)
-                .orElseThrow(() -> new ResourceNotFoundException("Inventory not exist with skuCode: " + skuCode ));
+    @PutMapping("/put/{id}")
+    public ResponseEntity<Inventory> updateInventory(@PathVariable Long id, @RequestBody Inventory inventoryDetails){
+        Inventory inventory = inventoryRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Inventory not exist with skuCode: " + id ));
 
         inventory.setSkuCode(inventoryDetails.getSkuCode());
         inventory.setQuantity(inventoryDetails.getQuantity());
@@ -52,10 +52,10 @@ public class InventoryController {
     }
 
     // delete employee rest api
-    @DeleteMapping("/inventory/{skuCode}")
-    public ResponseEntity <Map<String, Boolean>> deleteInventory(@PathVariable Long skuCode){
-        Inventory inventory = inventoryRepository.findById(skuCode)
-                .orElseThrow(() -> new ResourceNotFoundException("Inventory not exist with skuCode: " + skuCode));
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity <Map<String, Boolean>> deleteInventory(@PathVariable Long id){
+        Inventory inventory = inventoryRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Inventory not exist with skuCode: " + id));
         inventoryRepository.delete(inventory);
         Map<String, Boolean> response = new HashMap<>();
         response.put ("deleted", Boolean.TRUE);
