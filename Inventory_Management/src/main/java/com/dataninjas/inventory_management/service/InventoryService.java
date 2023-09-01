@@ -6,9 +6,6 @@ import com.dataninjas.inventory_management.repository.InventoryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.HashMap;
 import java.util.List;
@@ -30,7 +27,7 @@ public class InventoryService {
                 .orElseThrow(() -> new ResourceNotFoundException("Inventory not exist with skuCode: " + id ));
         return ResponseEntity.ok(inventory);
     }
-    public ResponseEntity<Inventory> updateInventory(@PathVariable Long id, @RequestBody Inventory inventoryDetails){
+    public ResponseEntity<Inventory> updateInventory(Long id, Inventory inventoryDetails){
         Inventory inventory = inventoryRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Inventory not exist with skuCode: " + id ));
 
@@ -42,7 +39,7 @@ public class InventoryService {
         Inventory updatedInventory = inventoryRepository.save(inventory);
         return ResponseEntity.ok(updatedInventory);
     }
-    public ResponseEntity <Map<String, Boolean>> deleteInventory(@PathVariable Long id){
+    public ResponseEntity <Map<String, Boolean>> deleteInventory(Long id){
         Inventory inventory = inventoryRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Inventory not exist with skuCode: " + id));
         inventoryRepository.delete(inventory);
