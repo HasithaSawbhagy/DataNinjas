@@ -17,19 +17,19 @@ public class OrderController {
     @Autowired
     private OrderRepository orderRepository;
 
-    //Get all receptions
+    //Get all orders
     @GetMapping("/order")
     public List<Order> getAllOrder(){
         return orderRepository.findAll();
     }
 
-    //Create receptions rest API
+    //Create orders rest API
     @PostMapping("/order")
     public Order createOrder(@RequestBody Order order){
         return orderRepository.save(order);
     }
 
-    //Update reception rest api
+    //Update order rest api
     @PutMapping("/order/{id}")
     public ResponseEntity<Order> updateOrder(@PathVariable Long id, @RequestBody Order orderDetails){
         Order order = orderRepository.findById(id)
@@ -40,7 +40,7 @@ public class OrderController {
         return ResponseEntity.ok(updateOrder);
     }
 
-    //Delete reception rest api
+    //Delete order rest api
     @DeleteMapping("/order/{id}")
     public ResponseEntity<Map<String, Boolean>> deleteOrder(@PathVariable Long id){
 
