@@ -20,14 +20,25 @@ public class InventoryService {
 
     @Transactional(readOnly = true)
     public List<InventoryResponse> isInStock(List<String> skuCode) {
-        return inventoryRepository.findBySkuCodeIn(skuCode).stream()
+//        System.out.println("SKU Codes: " + skuCode);
+
+        List<Inventory> inventoryList = inventoryRepository.findBySkuCodeIn(skuCode);
+//        System.out.println("Inventory List Size: " + inventoryList.size());
+
+        List<InventoryResponse> inventoryResponses = inventoryList.stream()
                 .map(inventory ->
                         InventoryResponse.builder()
                                 .skuCode(inventory.getSkuCode())
                                 .isInStock(inventory.getQuantity() > 0)
                                 .build()
                 ).toList();
+
+        // Print the output for debugging
+        System.out.println("Inventory Response: " + inventoryResponses);
+
+        return inventoryResponses;
     }
+
 
     public Inventory createInventory(Inventory inventory) {
         return inventoryRepository.save(inventory);

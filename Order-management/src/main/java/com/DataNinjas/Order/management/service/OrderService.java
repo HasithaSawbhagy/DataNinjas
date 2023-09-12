@@ -35,24 +35,29 @@ public class OrderService {
                 .toList();
 
         order.setOrderLineItemsList(orderLineItems);
+
         List<String> skuCodes = order.getOrderLineItemsList().stream()
                 .map(OrderLineItems::getSkuCode)
                 .toList();
 
-        //call and place order if product is exist
+        //call and place order if product exists
         //stock
-        InventoryResponse[] inventoryResponsArray = webClient.get()
+        InventoryResponse[] inventoryResponsesArray = webClient.get()
                 .uri("http://localhost:8082/api/inventory",
                         uriBuilder -> uriBuilder.queryParam("skuCode", skuCodes).build())
                 .retrieve()
                 .bodyToMono(InventoryResponse[].class)
                 .block();
+        // Log or print the inventory response for debugging
+        System.out.println(Arrays.toString(inventoryResponsesArray));
 
-       boolean allProductsInStock= Arrays.stream(inventoryResponsArray)
-               .allMatch(InventoryResponse::isInStock);
+        assert inventoryResponsesArray != null;
+        boolean allProductsInStock = Arrays.stream(inventoryResponsesArray)
+                .allMatch(InventoryResponse::isInStock);
 
         if (allProductsInStock) {
             orderRepository.save(order);
+            System.out.println(allProductsInStock);
         } else {
             throw new IllegalArgumentException("Product is not in stock!");
         }
