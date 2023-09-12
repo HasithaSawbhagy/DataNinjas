@@ -48,7 +48,7 @@ public class InventoryController {
     }
 
     //update inventory rest api
-    @PutMapping("/put/{id}")
+    @PutMapping("/update/{id}")
     public ResponseEntity<Inventory> updateInventory(@PathVariable Long id, @RequestBody Inventory inventoryDetails) {
         return inventoryService.updateInventory(id, inventoryDetails);
     }

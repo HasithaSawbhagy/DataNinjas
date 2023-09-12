@@ -1,5 +1,6 @@
 package com.DataNinjas.Order.management.service;
 
+import com.DataNinjas.Order.management.Exception.ResourceNotFoundException;
 import com.DataNinjas.Order.management.dto.InventoryResponse;
 import com.DataNinjas.Order.management.dto.OrderLineItemsDto;
 import com.DataNinjas.Order.management.dto.OrderRequest;
@@ -8,13 +9,15 @@ import com.DataNinjas.Order.management.model.OrderLineItems;
 import com.DataNinjas.Order.management.repository.OrderRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.reactive.function.client.WebClient;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -64,12 +67,33 @@ public class OrderService {
 
 
     }
-
     private OrderLineItems mapToDto(OrderLineItemsDto orderLineItemsDto) {
         OrderLineItems orderLineItems = new OrderLineItems();
         orderLineItems.setPrice(orderLineItemsDto.getPrice());
         orderLineItems.setQuantity(orderLineItemsDto.getQuantity());
         orderLineItems.setSkuCode(orderLineItemsDto.getSkuCode());
         return orderLineItems;
+    }
+
+    public List<Order> getOrder (){
+        return orderRepository.findAll();
+    }
+
+    public ResponseEntity<Order> updateOrder (@PathVariable Long id, @RequestBody Order order){
+        Order orderItem = orderRepository.findById(id) .orElseThrow(()->new ResourceNotFoundException("Reception not exist with Id:"+id));
+        orderItem.setId(order.getId());
+        orderItem.setOrderNumber(order.getOrderNumber());
+        orderItem.setOrderLineItemsList(order.getOrderLineItemsList());
+        Order updatedOrder = orderRepository.save(orderItem);
+        return ResponseEntity.ok(updatedOrder);
+    }
+
+    public ResponseEntity<Map<String, Boolean>> deleteOrder(@PathVariable Long id){
+        Order orderItem = orderRepository.findById(id)
+                .orElseThrow(()->new ResourceNotFoundException("Reception not exist with Id:"+id));
+        orderRepository.delete(orderItem);
+        Map<String, Boolean> response = new HashMap<>();
+        response.put("deleted", Boolean.TRUE);
+        return ResponseEntity.ok(response);
     }
 }
