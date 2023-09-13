@@ -79,13 +79,42 @@ public class OrderService {
         return orderRepository.findAll();
     }
 
-    public ResponseEntity<Order> updateOrder (@PathVariable Long id, @RequestBody Order order){
-        Order orderItem = orderRepository.findById(id) .orElseThrow(()->new ResourceNotFoundException("Reception not exist with Id:"+id));
-        orderItem.setId(order.getId());
-        orderItem.setOrderNumber(order.getOrderNumber());
-        orderItem.setOrderLineItemsList(order.getOrderLineItemsList());
-        Order updatedOrder = orderRepository.save(orderItem);
-        return ResponseEntity.ok(updatedOrder);
+       public void updateOrder(Long id, OrderRequest orderRequest) {
+        Order order = orderRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Order does not exist with ID: " + id));
+
+        // Create a list of updated OrderLineItems from the request
+        List<OrderLineItems> updatedOrderLineItems = orderRequest.getOrderLineItemsDtoList()
+                .stream()
+                .map(this::mapToDto)
+                .collect(Collectors.toList());
+
+        // Clear the existing collection and add the updated elements
+        order.getOrderLineItemsList().clear();
+        order.getOrderLineItemsList().addAll(updatedOrderLineItems);
+
+        // Retrieve the SKU codes from the updated OrderLineItems
+        List<String> skuCodes = updatedOrderLineItems.stream()
+                .map(OrderLineItems::getSkuCode)
+                .collect(Collectors.toList());
+
+        // Call and place the order if all products exist in stock
+        InventoryResponse[] inventoryResponsesArray = webClient.get()
+                .uri("http://localhost:8082/api/inventory",
+                        uriBuilder -> uriBuilder.queryParam("skuCode", skuCodes).build())
+                .retrieve()
+                .bodyToMono(InventoryResponse[].class)
+                .block();
+
+        assert inventoryResponsesArray != null;
+        boolean allProductsInStock = Arrays.stream(inventoryResponsesArray)
+                .allMatch(InventoryResponse::isInStock);
+
+        if (allProductsInStock) {
+            orderRepository.save(order);
+        } else {
+            throw new IllegalArgumentException("One or more products are not in stock!");
+        }
     }
 
     public ResponseEntity<Map<String, Boolean>> deleteOrder(@PathVariable Long id){
