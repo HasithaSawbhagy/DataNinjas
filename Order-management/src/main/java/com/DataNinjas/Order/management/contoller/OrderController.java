@@ -36,8 +36,9 @@ public class OrderController {
     }
 
     @PutMapping("/put/{id}")
-    public ResponseEntity<Order> updateOrder(@PathVariable Long id, @RequestBody Order order){
-        return orderService.updateOrder(id, order);
+    public String updateOrder(@PathVariable Long id, @RequestBody OrderRequest orderRequest){
+        orderService.updateOrder(id, orderRequest);
+        return "Order Updated Successfully!";
     }
 
     @DeleteMapping("delete/{id}")
