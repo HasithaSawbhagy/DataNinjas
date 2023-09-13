@@ -22,7 +22,7 @@ import java.util.Map;
 public class OrderController {
 
     private final OrderService orderService;
-    private final OrderRepository orderRepository;
+
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public String placeOrder(@RequestBody OrderRequest orderRequest){

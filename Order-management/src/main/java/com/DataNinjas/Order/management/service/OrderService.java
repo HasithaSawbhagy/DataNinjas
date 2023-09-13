@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -44,29 +45,30 @@ public class OrderService {
                 .toList();
 
         //call and place order if product exists
-        //stock
         InventoryResponse[] inventoryResponsesArray = webClient.get()
                 .uri("http://localhost:8082/api/inventory",
                         uriBuilder -> uriBuilder.queryParam("skuCode", skuCodes).build())
                 .retrieve()
                 .bodyToMono(InventoryResponse[].class)
                 .block();
-        // Log or print the inventory response for debugging
-        System.out.println(Arrays.toString(inventoryResponsesArray));
+
 
         assert inventoryResponsesArray != null;
         boolean allProductsInStock = Arrays.stream(inventoryResponsesArray)
-                .allMatch(InventoryResponse::isInStock);
+                .anyMatch(InventoryResponse::isInStock);
 
         if (allProductsInStock) {
             orderRepository.save(order);
-            System.out.println(allProductsInStock);
+//            System.out.println("d");
         } else {
+            System.out.println(Arrays.toString(inventoryResponsesArray));
             throw new IllegalArgumentException("Product is not in stock!");
+
         }
 
 
     }
+
     private OrderLineItems mapToDto(OrderLineItemsDto orderLineItemsDto) {
         OrderLineItems orderLineItems = new OrderLineItems();
         orderLineItems.setPrice(orderLineItemsDto.getPrice());
@@ -75,11 +77,11 @@ public class OrderService {
         return orderLineItems;
     }
 
-    public List<Order> getOrder (){
+    public List<Order> getOrder() {
         return orderRepository.findAll();
     }
 
-       public void updateOrder(Long id, OrderRequest orderRequest) {
+    public void updateOrder(Long id, OrderRequest orderRequest) {
         Order order = orderRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Order does not exist with ID: " + id));
 
@@ -117,9 +119,9 @@ public class OrderService {
         }
     }
 
-    public ResponseEntity<Map<String, Boolean>> deleteOrder(@PathVariable Long id){
+    public ResponseEntity<Map<String, Boolean>> deleteOrder(@PathVariable Long id) {
         Order orderItem = orderRepository.findById(id)
-                .orElseThrow(()->new ResourceNotFoundException("Reception not exist with Id:"+id));
+                .orElseThrow(() -> new ResourceNotFoundException("Reception not exist with Id:" + id));
         orderRepository.delete(orderItem);
         Map<String, Boolean> response = new HashMap<>();
         response.put("deleted", Boolean.TRUE);
