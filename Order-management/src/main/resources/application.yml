@@ -1,0 +1,19 @@
+spring:
+  profiles:
+    active: dev
+  datasource:
+    url: jdbc:sqlserver://localhost\MSSQLSERVER:1433;database=Order;encrypt=true;trustServerCertificate=true;
+    username: order
+    password: 1234
+    driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+  mvc:
+    path match:
+      matching-strategy: ant_path_matcher
+server:
+  port: 8081
+
+
