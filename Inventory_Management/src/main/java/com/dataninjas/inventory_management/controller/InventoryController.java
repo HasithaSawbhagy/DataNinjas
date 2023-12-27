@@ -1,23 +1,17 @@
 package com.dataninjas.inventory_management.controller;
 
-import com.dataninjas.inventory_management.exception.ResourceNotFoundException;
 import com.dataninjas.inventory_management.model.Inventory;
-import com.dataninjas.inventory_management.repository.InventoryRepository;
 import com.dataninjas.inventory_management.service.InventoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 @RestController
 @RequestMapping("/api/inventory")
 public class InventoryController {
-
-    @Autowired
-    private InventoryRepository inventoryRepository;
     @Autowired
     private InventoryService inventoryService;
 
@@ -33,7 +27,7 @@ public class InventoryController {
         return inventoryService.getAllEmployees();
     }
 
-    // get inventory by skuCode rest api
+    // get inventory by id rest api
     @GetMapping("/getbyid/{id}")
     public ResponseEntity<Inventory> getInventoryById(@PathVariable Long id){
         return inventoryService.getInventoryById(id);

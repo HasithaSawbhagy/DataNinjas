@@ -24,12 +24,12 @@ public class InventoryService {
     }
     public ResponseEntity<Inventory> getInventoryById(Long id){
         Inventory inventory = inventoryRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Inventory not exist with skuCode: " + id ));
+                .orElseThrow(() -> new ResourceNotFoundException("Inventory not exist with id: " + id ));
         return ResponseEntity.ok(inventory);
     }
     public ResponseEntity<Inventory> updateInventory(Long id, Inventory inventoryDetails){
         Inventory inventory = inventoryRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Inventory not exist with skuCode: " + id ));
+                .orElseThrow(() -> new ResourceNotFoundException("Inventory not exist with id: " + id ));
 
         if(inventoryDetails.getSkuCode() != null)
             inventory.setSkuCode(inventoryDetails.getSkuCode());
@@ -41,7 +41,7 @@ public class InventoryService {
     }
     public ResponseEntity <Map<String, Boolean>> deleteInventory(Long id){
         Inventory inventory = inventoryRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Inventory not exist with skuCode: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Inventory not exist with id: " + id));
         inventoryRepository.delete(inventory);
         Map<String, Boolean> response = new HashMap<>();
         response.put ("deleted", Boolean.TRUE);
